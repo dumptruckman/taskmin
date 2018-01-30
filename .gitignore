@@ -1,0 +1,58 @@
+# Eclipse stuff
+/.classpath
+/.project
+/.settings
+/.checkstyle
+
+# netbeans
+/nbproject
+
+# we use maven!
+/build.xml
+
+# maven
+/target
+
+# vim
+.*.sw[a-p]
+
+# various other potential build files
+/build
+/bin
+/dist
+/manifest.mf
+
+/world
+
+# Mac filesystem dust
+*.DS_Store
+
+# intellij
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Fern's utils
+uploadtoserver.sh
+
+# Testing files:
+debug.log
+
+# Doxygen
+/docs/html
+debug.txt
+
+out
+.gradle/
+
+libs/
+runtime/
+.bot-stop
+*.jar
+java_pid310.hprof
+kaddy-bot/build/
+kaddy-config/build/
+kaddy-daemon/build/
+kaddy-sample-plugin/build/
+plugins
