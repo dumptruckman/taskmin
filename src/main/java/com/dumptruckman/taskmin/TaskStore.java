@@ -44,6 +44,11 @@ public interface TaskStore {
     void markCompleted(@NotNull Task task);
 
     /**
+     * Notifies the backing store that the given task will be repeated.
+     */
+    void markRepeated(@NotNull Task task);
+
+    /**
      * Creates the task from the given TaskBuilder and adds it to the task store. Every task created by this TaskStore
      * must be given a unique ID.
      *

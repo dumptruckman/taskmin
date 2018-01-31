@@ -24,6 +24,14 @@ public class Example {
 }
 ```
 
+And if you want a repeating task?
+```java
+// Adding a task that says "Hello!" every second.
+taskManager.addTask(Task.builder(() -> System.out.println("Hello!"))
+        .repeatEvery(Duration.of(1, ChronoUnit.SECONDS)) // The repeat period
+        .skipFirstExecution()); // It won't execute until after the first period
+```
+
 #### Building
 Simply run `gradlew build` to build the library.
 

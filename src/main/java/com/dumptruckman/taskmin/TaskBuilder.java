@@ -25,7 +25,9 @@
 package com.dumptruckman.taskmin;
 
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 public class TaskBuilder {
@@ -34,6 +36,9 @@ public class TaskBuilder {
     private final Runnable action;
     @NotNull
     private LocalDateTime executionTime = LocalDateTime.now();
+    @Nullable
+    private Duration period = null;
+    private boolean skipFirstExecution = false;
 
     TaskBuilder(@NotNull Runnable action) {
         this.action = action;
@@ -48,8 +53,37 @@ public class TaskBuilder {
         return this;
     }
 
+    /**
+     * After the first execution, this is how long the task will wait before repeating. The task will not repeat
+     * if this is not specified.
+     */
+    @NotNull
+    public TaskBuilder repeatEvery(@NotNull Duration period) {
+        this.period = period;
+        return this;
+    }
+
+    public TaskBuilder skipFirstExecution() {
+        this.skipFirstExecution = true;
+        return this;
+    }
+
     @NotNull
     public Task build(int taskId) {
-        return new Task(taskId, action, executionTime);
+        if (skipFirstExecution && period == null) {
+            throw new IllegalStateException("A repeat period must be specified to skip the first execution.");
+        }
+
+        Task task;
+        if (period != null) {
+            task = new RepeatingTask(taskId, action, executionTime, period);
+            if (skipFirstExecution) {
+                task.setExecutionTime(LocalDateTime.now().plus(period));
+            }
+        } else {
+            task = new Task(taskId, action, executionTime);
+        }
+
+        return task;
     }
 }

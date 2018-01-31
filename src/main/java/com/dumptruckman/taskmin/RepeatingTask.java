@@ -25,48 +25,23 @@
 package com.dumptruckman.taskmin;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-import java.util.SortedSet;
-import java.util.concurrent.ConcurrentSkipListSet;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
-/**
- * A simple in memory TaskStore.
- */
-class MemoryTaskStore implements TaskStore {
+class RepeatingTask extends Task {
 
-    private final SortedSet<Task> taskList = new ConcurrentSkipListSet<>();
-    private volatile int nextId = 0;
+    private final Duration period;
 
-    @Override
-    @Nullable
-    public Task getNextTask() {
-        if (taskList.isEmpty()) {
-            return null;
-        }
-        return taskList.first();
+    public RepeatingTask(int taskId,@NotNull Runnable action, @NotNull LocalDateTime executionTime,
+                         @NotNull Duration period) {
+        super(taskId, action, executionTime);
+        this.period = period;
     }
 
     @Override
-    public void markCompleted(@NotNull Task task) {
-        taskList.remove(task);
-    }
-
-    @Override
-    public void markRepeated(@NotNull Task task) {
-        // The task must be resorted as the execution time has changed.
-        taskList.remove(task);
-        taskList.add(task);
-    }
-
-    @Override
-    public @NotNull Task createTask(@NotNull TaskBuilder taskBuilder) {
-        Task task;
-        synchronized (this) {
-            task = taskBuilder.build(nextId);
-            taskList.add(task);
-            nextId++;
-        }
-        return task;
+    public void run() {
+        setExecutionTime(getExecutionTime().plus(period));
+        super.run();
     }
 }

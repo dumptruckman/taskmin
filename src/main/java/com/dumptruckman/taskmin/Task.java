@@ -37,10 +37,12 @@ public class Task implements Runnable, Comparable<Task> {
     }
 
     private final int taskId;
+    @NotNull
     private final Runnable action;
-    private final LocalDateTime executionTime;
+    @NotNull
+    private volatile LocalDateTime executionTime;
 
-    public Task(int taskId, Runnable action, LocalDateTime executionTime) {
+    public Task(int taskId, @NotNull Runnable action, @NotNull LocalDateTime executionTime) {
         this.taskId = taskId;
         this.action = action;
         this.executionTime = executionTime;
@@ -61,8 +63,18 @@ public class Task implements Runnable, Comparable<Task> {
     /**
      * Returns the LocalDateTime objects that represent when this task should be run.
      */
+    @NotNull
     public LocalDateTime getExecutionTime() {
         return executionTime;
+    }
+
+    /**
+     * Sets the execution time of this task.
+     *
+     * @param executionTime the new execution time.
+     */
+    void setExecutionTime(LocalDateTime executionTime) {
+        this.executionTime = executionTime;
     }
 
     @Override

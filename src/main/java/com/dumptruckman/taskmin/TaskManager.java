@@ -127,7 +127,10 @@ public class TaskManager {
         private void sleep(@NotNull LocalDateTime expiration, @NotNull LocalDateTime now) {
             long waitDuration = getWaitDuration(expiration, now);
             try {
-                taskManager.wait(waitDuration);
+                if (waitDuration == 0) {
+                    taskManager.wait(0, (int) now.until(expiration, ChronoUnit.NANOS));
+                } else {
+                    taskManager.wait(waitDuration);}
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -143,9 +146,16 @@ public class TaskManager {
         }
 
         private void performTask() {
-            taskManager.taskRunner.runTask(taskManager.nextTask);
-            taskManager.taskStore.markCompleted(taskManager.nextTask);
-            taskManager.nextTask = null;
+            Task task = taskManager.nextTask;
+            if (task != null) {
+                taskManager.taskRunner.runTask(task);
+                if (task instanceof RepeatingTask) {
+                    taskManager.taskStore.markRepeated(task);
+                } else {
+                    taskManager.taskStore.markCompleted(task);
+                }
+                taskManager.nextTask = null;
+            }
         }
     }
 }
