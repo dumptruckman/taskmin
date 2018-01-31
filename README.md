@@ -36,4 +36,19 @@ taskManager.addTask(Task.builder(() -> System.out.println("Hello!"))
 Simply run `gradlew build` to build the library.
 
 #### Maven Dependency Information
-Coming soon.
+```xml
+<repositories>
+    <repository>
+        <id>onarandombox</id>
+        <url>http://repo.onarandombox.com/content/groups/public/</url>
+    </repository>
+</repositories>
+
+<dependencies>
+    <dependency>
+        <groupId>com.dumptruckman</groupId>
+        <artifactId>taskmin</artifactId>
+        <version>0.1.0</version>
+    </dependency>
+</dependencies>
+```
