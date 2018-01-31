@@ -1,9 +1,16 @@
-group 'com.dumptruckman'
-version '0.0.1-SNAPSHOT'
+plugins {
+    id 'net.minecrell.licenser' version '0.3'
+}
 
 apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'net.minecrell.licenser'
+
+group 'com.dumptruckman'
+version '0.0.1'
 
 sourceCompatibility = 1.8
+targetCompatibility = 1.8
 
 repositories {
     mavenCentral()
@@ -13,4 +20,42 @@ dependencies {
     compile 'org.jetbrains:annotations:15.0'
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier 'sources'
+    from sourceSets.main.allSource
+    from "${projectDir}/LICENSE.txt"
+}
+
+task javadocJar(type: Jar) {
+    classifier 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+license {
+    header project.file('LICENSE.txt')
+    include '**/*.java'
+    newLine false
+}
+
+if (project.hasProperty('mavenUser') && project.hasProperty('mavenPassword')) {
+    jar.dependsOn checkLicenses
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: "http://repo.onarandombox.com/content/repositories/thirdparty/") {
+                    authentication(userName: mavenUser, password: mavenPassword)
+                }
+                snapshotRepository(url: "http://repo.onarandombox.com/content/repositories/thirdparty-dev/") {
+                    authentication(userName: mavenUser, password: mavenPassword)
+                }
+            }
+        }
+    }
 }
